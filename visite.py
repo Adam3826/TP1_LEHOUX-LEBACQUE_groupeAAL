@@ -40,6 +40,8 @@ class Visite(object):
         except IndexError:
             print("Erreur: Les données de distance pour ces visites ne sont pas disponibles.")
             return None
+    def getDemand(self):
+        return self.demand
         
     
     @classmethod

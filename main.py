@@ -7,6 +7,7 @@ not when you import the module.
 '''
 import csv
 from tournee import Tournee
+from vehiicle import Vehicle
 
 from visite import Visite
 def lire_visites_de_csv(nom_fichier):
@@ -22,16 +23,30 @@ def lire_visites_de_csv(nom_fichier):
             visite = Visite(visit_id, visit_name, demand)
             visites.append(visite)
     return visites
+
+def jePeuxRajouterUnClient(tournee, visites, monVehicule):
+    capacityOk = False
+    distanceOk = False
+    #vérifier que la capacité du vehicule n'est pas dépassée
+    demandeTotale = 0
+    for etape in tournee.visites:
+        demandeTotale += etape.demande
+    for uneVisite in visites:
+        if uneVisite.demande + demandeTotale <= monVehicule.capacity and tournee.getDistance() + uneVisite.getDistance() <= monVehicule.maxDist:
+            return True, uneVisite
+    return False, None
+    
 def main():
     
-    mesVisites = lire_visites_de_csv("visits.csv")
+    visites = lire_visites_de_csv("visits.csv")
 
     print("Hello word!\n")
-    print(" visite 1 : " + str(mesVisites[1])) # mesVisites[0]
+    print(" visite 1 : " + str(visites[1])) # mesVisites[0]
 
-    maTournee = Tournee(mesVisites[0:2])
-    for etape in maTournee.visites:
-        print(str(etape))
+    tournee = Tournee([visites[0]])
+    vehicule = Vehicle('vehicle.ini')
+
+    visites[0]
 
 
 if __name__ == '__main__':
