@@ -4,26 +4,33 @@ Classes basic example
 @author: Vassilissa Lehoux
 '''
 
+from typing import Dict, List
+from visite import Visite
+
+
 class Tournee(object):
     '''
     classdocs
     '''
-    visites = []
-    distance = 0
+    distance = 0.0
     chargement = 0
-    #class_var = "ex_class_var"  # attribute of the class, shared between instances
 
-    def __init__(self, listeVisites):
+    def __init__(self, depart: Visite):
         '''
         Constructor. Only one is possible per class.
         self is the instance.
         '''
-        self.visites = listeVisites  # attribute different for each instance
-        self.computeDistance()
-        self.computeChargement()
+        self.visites: List[Visite] = []
+        self.visites.append(depart)
+        self.chargement += depart.demand
 
-    def addVisite(self, visite):
+    def addVisite(self, visite: Visite):
         self.visites.append(visite)
+        self.chargement += visite.demand
+        self.distance += self.getLastVisite().getDistanceToVisit(visite)
+    
+    def getLastVisite(self):
+        return self.visites[-1]
         
     def computeDistance(self):
         for i in range(len(self.visites) - 1):
@@ -36,12 +43,22 @@ class Tournee(object):
         self.chargement = self.chargement + self.visites[-1].getDemand()
         self.chargement
 
-    def getDistance(self):
-        return self.distance
-    
+    # evaluer la solution
+    def evalTemps(self):
+        temps_livraison = -1
+
+        for visite in self.visites:
+            #visite.
+
+
+
+
+         return 0
+
+
     def __str__(self):
         """
         custom object string representation
         """
-        return "listeVisites : " + str(self.attribute1)
+        return "listeVisites : " + ",".join(v.visitName for v in self.visites)
 
