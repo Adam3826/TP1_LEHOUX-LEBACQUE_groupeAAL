@@ -30,6 +30,6 @@ La somme des demandes des clients consécutifs n'excède pas la capacité **Capa
 
 ## Voisins
 
-- Permutation dans une tournée
-- Ajouter une visite dans une tournée
-- Permutation entre deux tournées
+- Permutation dans une tournée (echange de deux éléments d'une même tournée)
+- Ajouter une visite dans une tournée (depuis une autre tournée)
+- Permutation entre deux tournées (echange de deux éléments de tournées différentes)

@@ -4,23 +4,35 @@ Classes basic example
 @author: Vassilissa Lehoux
 '''
 
+from typing import List
 import numpy as np
 
-class Visite(object):
+from tournee import Tournee
+
+class Affectation(object):
     '''
     classdocs
     '''
-    visitID = -1
-    visitName = "N/A"
-    demand = -1
-    def __init__(self, visitID: int, visitName, demand: int):
+    tempsTotal = -1
+
+    def __init__(self, tournee: Tournee):
         '''
         Constructor. Only one is possible per class.
         self is the instance.
         '''
-        self.visitID = visitID
-        self.visitName = visitName
-        self.demand = demand
+        self.tournees: List[Tournee] = []
+        self.tournees.append(tournee)
+        self.tempsTotal = self.computeTemps()
+
+    def computeTemps(self):
+        res = 0
+        for tournee in self.tournees:
+            res += tournee.duree
+        return res
+    
+    def addTournee(self, tournee: Tournee):
+        self.tournees.append(tournee)
+        self.tempsTotal = self.computeTemps()
 
     def __str__(self):
         """
@@ -28,19 +40,7 @@ class Visite(object):
         """
         return "numeroVisite : " + str(self.visitID) +"\n visitName : " + str(self.visitName) + "\n demand : " + str(self.demand)
         
-    def getDureeTo(self, autreVisite: 'Visite'):
-        try:
-            with open('times.txt', 'r') as file:
-                lines = np.loadtxt(file)
-                duree = float(lines[self.visitID][autreVisite.visitID])
-                return duree
-        except FileNotFoundError:
-            print("Le fichier distances.txt n'a pas été trouvé.") 
-            return None
-        except IndexError:
-            print("Erreur: Les données de distance pour ces visites ne sont pas disponibles.")
-            return None
-
+    
     def getDistanceToVisit(self, autreVisite: 'Visite'):
         try:
             with open('distances.txt', 'r') as file:

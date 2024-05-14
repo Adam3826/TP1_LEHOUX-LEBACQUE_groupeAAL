@@ -7,6 +7,7 @@ not when you import the module.
 '''
 import csv
 from typing import Dict, List
+from affectation import Affectation
 from tournee import Tournee
 from vehicle import Vehicle
 
@@ -26,25 +27,51 @@ def lire_visites_de_csv(nom_fichier):
             visites[visite.visitID] = visite
     return visites
 
-def jePeuxRajouterUnClient(tournee: Tournee, visites: Dict[int, Visite], monVehicule: Vehicle) -> Visite:
+def jePeuxRajouterUnClient(tournee: Tournee, visites: Dict[int, Visite]) -> Visite:
     for uneVisite in visites.values():
-        if uneVisite.demand + tournee.chargement <=  monVehicule.capacity and tournee.distance + tournee.getLastVisite().getDistanceToVisit(uneVisite) <= monVehicule.max_dist:
+        if tournee.canAddVisite(uneVisite):
             return uneVisite
     return None
     
 def main(): 
     visites = lire_visites_de_csv("visits.csv")
-    
-    tournee = Tournee(visites[0])
-    visites.pop(0)
+
+    depot: Visite = visites.pop(0)
+ 
     vehicule = Vehicle('vehicle.ini')
+    
+    Tournees = []
+    print("taile visit avant : "+ str(len(visites))) 
 
-    while visite_suivante := jePeuxRajouterUnClient(tournee, visites, vehicule):
-        tournee.addVisite(visite_suivante)
-        print(visite_suivante.visitID, tournee.distance, tournee.chargement)
-        visites.pop(visite_suivante.visitID)
+    while len(visites) !=0:
+        tournee = Tournee(depot, vehicule)
+        while visite_suivante := jePeuxRajouterUnClient(tournee, visites):
+            tournee.addVisite(visite_suivante)
+            print("\n visite suivante ID : " + str(visite_suivante.visitID) + ", distance tournée : " + str(tournee.distance) + "km, chargement tournée : " +  str(tournee.chargement))
+            visites.pop(visite_suivante.visitID)
+        # s'assurer qu'on puisse retourner au dépôt
+        while not tournee.canAddVisite(depot):
+            tournee.visites.pop(-1)
 
-    print(str(tournee))
+        tournee.addVisite(depot)
+
+        Tournees.append(tournee)
+        
+        print("\n distance tournée : " + str(tournee.distance) + "km, chargement tournée : " +  str(tournee.chargement))
+
+        print("taile visit après : "+ str(len(visites))) 
+
+        print(str(tournee))
+        print("durée : " + str(tournee.duree/3600) + " heures")
+    
+
+    print("durée d'une journée : " + str(tournee.vehicule.duration/3600) + " heures")
+    print("--------------------------------------------------------------")
+    for tourne in Tournees:
+        print("\n "+ str(tourne))
+
+    print("\n-----------------\n")
+    affectation = Affectation(tournee)
 
 
 if __name__ == '__main__':

@@ -6,29 +6,38 @@ Classes basic example
 
 from typing import Dict, List
 from visite import Visite
+from vehicle import Vehicle
 
 
 class Tournee(object):
     '''
     classdocs
     '''
-    distance = 0.0
-    chargement = 0
 
-    def __init__(self, depart: Visite):
+    def __init__(self, depart: Visite, vehicule: Vehicle):
         '''
         Constructor. Only one is possible per class.
         self is the instance.
         '''
+        self.vehicule = vehicule
+        self.distance = 0.0
+        self.duree = 0
         self.visites: List[Visite] = []
         self.visites.append(depart)
-        self.chargement += depart.demand
+        self.chargement = 0 + depart.demand
 
     def addVisite(self, visite: Visite):
+        self.distance += self.getLastVisite().getDistanceToVisit(visite)
+        self.duree += self.getLastVisite().getDureeTo(visite)
         self.visites.append(visite)
         self.chargement += visite.demand
-        self.distance += self.getLastVisite().getDistanceToVisit(visite)
     
+    def canAddVisite(self, visite: Visite):
+        checkDemande = visite.demand + self.chargement <= self.vehicule.capacity 
+        checkDistance =  self.distance + self.getLastVisite().getDistanceToVisit(visite) <= self.vehicule.max_dist
+        checkDuration = self.duree + self.getLastVisite().getDureeTo(visite) <= self.vehicule.duration
+        return checkDemande and checkDistance and checkDuration
+
     def getLastVisite(self):
         return self.visites[-1]
         
@@ -49,9 +58,7 @@ class Tournee(object):
 
         for visite in self.visites:
             #visite.
-
-
-
+            # TODO ???
 
          return 0
 
@@ -60,5 +67,5 @@ class Tournee(object):
         """
         custom object string representation
         """
-        return "listeVisites : " + ",".join(v.visitName for v in self.visites)
+        return "listeVisites : " + ",".join(v.visitName for v in self.visites) + "\n Durée tournée : " + str(self.duree/3600) + " heures \n distance tournée : " + str(self.distance) + " km"
 
