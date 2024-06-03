@@ -21,13 +21,16 @@ class Affectation(object):
         self is the instance.
         '''
         self.tournees: List[Tournee] = []
-        self.tournees.append(tournee)
-        self.tempsTotal = self.computeTemps()
+        self.tempsTotal = 0
+        if(tournee):
+            self.tournees.append(tournee)
+            self.tempsTotal = self.computeTemps()
 
     def computeTemps(self):
         res = 0
         for tournee in self.tournees:
-            res += tournee.duree
+            res += tournee.duree + 10*60 #On rajoute les 10 minutes de chargement entre chaque tournée
+        
         return res
     
     def addTournee(self, tournee: Tournee):

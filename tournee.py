@@ -14,7 +14,10 @@ class Tournee(object):
     classdocs
     '''
 
-    def __init__(self, depart: Visite, vehicule: Vehicle):
+    def tempsLivraison(self, visite: Visite):
+        return visite.demand * 5 + 5*60
+    
+    def __init__(self, depart: Visite , vehicule: Vehicle):
         '''
         Constructor. Only one is possible per class.
         self is the instance.
@@ -28,14 +31,14 @@ class Tournee(object):
 
     def addVisite(self, visite: Visite):
         self.distance += self.getLastVisite().getDistanceToVisit(visite)
-        self.duree += self.getLastVisite().getDureeTo(visite)
+        self.duree += self.getLastVisite().getDureeTo(visite) + self.tempsLivraison(visite)
         self.visites.append(visite)
         self.chargement += visite.demand
     
     def canAddVisite(self, visite: Visite):
         checkDemande = visite.demand + self.chargement <= self.vehicule.capacity 
         checkDistance =  self.distance + self.getLastVisite().getDistanceToVisit(visite) <= self.vehicule.max_dist
-        checkDuration = self.duree + self.getLastVisite().getDureeTo(visite) <= self.vehicule.duration
+        checkDuration = self.duree + self.getLastVisite().getDureeTo(visite) + self.tempsLivraison(visite) <= self.vehicule.duration
         return checkDemande and checkDistance and checkDuration
 
     def getLastVisite(self):
@@ -51,6 +54,8 @@ class Tournee(object):
             self.chargement = self.chargement + self.visites[i].getDemand()
         self.chargement = self.chargement + self.visites[-1].getDemand()
         self.chargement
+    
+    
 
     # evaluer la solution
     def evalTemps(self):
@@ -67,5 +72,5 @@ class Tournee(object):
         """
         custom object string representation
         """
-        return "listeVisites : " + ",".join(v.visitName for v in self.visites) + "\n Durée tournée : " + str(self.duree/3600) + " heures \n distance tournée : " + str(self.distance) + " km"
+        return "listeVisites : " + ",".join(v.visitName for v in self.visites) + "\n Durée tournée : " + str(self.duree/3600) + " heures \n distance tournée : " + str(self.distance) + " km" #\n chargement tournée : " + str(self.chargement) + " kg
 
