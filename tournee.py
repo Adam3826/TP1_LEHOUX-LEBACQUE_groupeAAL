@@ -4,7 +4,7 @@ Classes basic example
 @author: Vassilissa Lehoux
 '''
 
-from typing import Dict, List
+from typing import List
 from visite import Visite
 from vehicle import Vehicle
 

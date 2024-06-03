@@ -29,7 +29,7 @@ class Affectation(object):
     def computeTemps(self):
         res = 0
         for tournee in self.tournees:
-            res += tournee.duree + 10*60 #On rajoute les 10 minutes de chargement entre chaque tournée
+            res += tournee.duree + tournee.vehicule.tempsChargement() #On rajoute les 10 minutes de chargement entre chaque tournée + un temps de rechargement de batterie
         
         return res
     
@@ -73,7 +73,11 @@ class Affectation(object):
         except IndexError:
             print("Erreur: Les données de temps pour ces visites ne sont pas disponibles.")
             return None
-
+    def getDistanceTotale(self):
+        distanceTotale = 0
+        for tournee in self.tournees:
+            distanceTotale += tournee.distance
+        return distanceTotale
     
     @classmethod
     def getTempsChargement(self):

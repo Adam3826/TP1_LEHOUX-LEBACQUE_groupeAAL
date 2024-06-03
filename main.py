@@ -96,7 +96,7 @@ def getMeilleurVoisinD1(voisinage: List[List[Vehicle]]):
 
 # prend en argument une liste de vehicules (notre solution), retourne de manière  déterministe le voisin de type 1 (permutation au sein d'une tournée) qui améloire au mieux la solution
 def getMeilleurVoisin(voisinage: List[List[Vehicle]]):
-    # comparer la permut avec la opti (évaluer l'obj d'une sol)
+    
     cout = eval(voisinage[0])
     res = voisinage[0]
     for voisin in voisinage:
@@ -129,7 +129,7 @@ def voisinageND1(vehicules: List[Vehicle]):
 
 
 def lire_visites_de_csv(nom_fichier):
-    visites: Dict[int, Visite] = {}
+    visites = []
     with open(nom_fichier, 'r') as file:
         csv_reader = csv.reader(file)
         next(csv_reader)  # Skip header
@@ -140,11 +140,11 @@ def lire_visites_de_csv(nom_fichier):
             visit_id = int(visit_id)
             # Instancier la classe Visite avec les données de chaque ligne
             visite = Visite(visit_id, visit_name, demand)
-            visites[visite.visitID] = visite
+            visites.append(visite)
     return visites
 
-def jePeuxRajouterUnClient(tournee: Tournee, visites: Dict[int, Visite]) -> Visite:
-    for uneVisite in visites.values():
+def jePeuxRajouterUnClient(tournee: Tournee, visites: List[Visite]) -> Visite:
+    for uneVisite in visites:
         if tournee.canAddVisite(uneVisite):
             return uneVisite
     return None
@@ -158,10 +158,11 @@ def maxDureeTournees(vehicules: List[Vehicle]):
     
 def main(): 
     visites = lire_visites_de_csv("visits.csv")
-    ## Question 2 : décommentez la ligne ci-dessous pour l'heuristique non-déterministe
-    #random.shuffle(visites)
 
     depot: Visite = visites.pop(0)
+    # TP 1 Question 2 : décommentez la ligne ci-dessous pour l'heuristique non-déterministe
+    # TP 2 Question 3 : décommentez la ligne ci-dessous pour l'heuristique non-déterministe
+    #random.shuffle(visites)
  
     vehicule = Vehicle('vehicle.ini')
     
@@ -178,7 +179,7 @@ def main():
         while visite_suivante := jePeuxRajouterUnClient(tournee, visites):
             tournee.addVisite(visite_suivante)
             print("\n visite suivante ID : " + str(visite_suivante.visitID) + ", distance tournée : " + str(tournee.distance) + "km, chargement tournée : " +  str(tournee.chargement))
-            visites.pop(visite_suivante.visitID)
+            visites.remove(visite_suivante)
         # s'assurer qu'on puisse retourner au dépôt
         while not tournee.canAddVisite(depot):
             tournee.visites.pop(-1)
@@ -250,13 +251,16 @@ def main():
     print("\n ------------------------------------------------------------------------------------") 
     print("\n -----------------    Voisinage       ----------------------------------------") 
 
-    #partieVoisinage = voisinageD1(vehicules)[0:3]
+    ## TP 2 question 2 :
     print(" cout solution initiale : " + str(eval(vehicules)))
     print(" cout meilleur voisinage : " + str(eval(getMeilleurVoisin(voisinageD1(vehicules)))))
-    #for voisin in partieVoisinage:
-    #    print(" vehicule du premier voisin : " + str(voisin[0])) 
-    #voisinageD1(vehicules)
-
+    
+    # TP2 question 6
+    maxDistance = 0 #Distance parcourue par le vehicule qui a parcouru le plus de km dans une journée
+    for vehicule in vehicules:
+        if(vehicule.affectation.getDistanceTotale() > maxDistance):
+            maxDistance = vehicule.affectation.getDistanceTotale()
+    print("\n Distance maximale parcourue par un seul véhicule : " + str(maxDistance))
 
 
 

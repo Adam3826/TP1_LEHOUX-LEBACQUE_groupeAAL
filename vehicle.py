@@ -6,9 +6,12 @@ from datetime import datetime
 
 class Vehicle:
     def canAffect(self, tournee): #: Tournee
-        return self.affectation.tempsTotal + tournee.duree + self.charge_medium <= self.duration
+        return self.affectation.tempsTotal + tournee.duree + self.tempsChargement() <= self.duration
     def affect(self, tournee): #: Tournee
         self.affectation.addTournee(tournee)
+    
+    def tempsChargement(self):
+        return max(10*60, self.charge_fast)
         
     def __str__(self):
         res = ""
